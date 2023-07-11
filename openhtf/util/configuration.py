@@ -558,11 +558,11 @@ class _Configuration(object):
         continue
       if key in self._loaded_values:
         if _override:
-          self._logger.info(
+          self._logger.debug(
               'Overriding previously loaded value for %s (%s) with value: %s',
               key, self._loaded_values[key], value)
         else:
-          self._logger.info(
+          self._logger.debug(
               'Ignoring new value (%s), keeping previous value for %s: %s',
               value, key, self._loaded_values[key])
           continue

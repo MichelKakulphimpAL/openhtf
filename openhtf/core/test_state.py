@@ -182,6 +182,7 @@ class TestState(util.SubscribableStateMixin):
         diagnosers=test_options.diagnosers)
     logs.initialize_record_handler(execution_uid, self.test_record,
                                    self.notify_update)
+    logs.initialize_additional_handlers(test_uid=execution_uid, test_options=test_options)
     self.state_logger = logs.get_record_logger_for(execution_uid)
     self.plug_manager = plugs.PlugManager(test_desc.plug_types,
                                           self.state_logger)
@@ -204,6 +205,7 @@ class TestState(util.SubscribableStateMixin):
     the __del__ function unreliably.
     """
     logs.remove_record_handler(self.execution_uid)
+    logs.remove_additional_handlers(self.execution_uid)
 
   @property
   def logger(self) -> logging.Logger:

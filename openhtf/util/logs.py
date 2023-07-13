@@ -197,6 +197,37 @@ def remove_record_handler(test_uid):
       break
 
 
+def initialize_additional_handlers(test_uid, test_options):
+  """Add more log handlers for a test.
+
+  For each running test, we attach arbitrary user-defined handlers to the
+  top-level OpenHTF logger.
+
+  These user-defined handlers are stored in the `TestOption` object.
+
+  Args:
+    test_uid: UID for the test run.
+    test_options: Function that gets called when the test record is updated.
+  """
+  htf_logger = logging.getLogger(LOGGER_PREFIX)
+  for handler in test_options.additional_handlers:
+    # modify handler to filter out log lines coming from other running tests
+    uid_filter = TestUidFilter(test_uid=test_uid)
+    # add a `test_uid` attribute so we can isolate the handler for removal after test execution
+    handler.test_uid = test_uid
+    handler.addFilter(uid_filter)
+
+    htf_logger.addHandler(handler)
+
+
+def remove_additional_handlers(test_uid):
+  handlers = logging.getLogger(LOGGER_PREFIX).handlers
+  for handler in handlers:
+    # check if handler has the `test_uid` attribute and if it matches the uid of the current test
+    if "test_uid" in handler.__dict__ and handler.test_uid is test_uid:
+      handlers.remove(handler)
+
+
 def log_once(log_func, msg, *args, **kwargs):
   """"Logs a message only once."""
   if msg not in _LOG_ONCE_SEEN:

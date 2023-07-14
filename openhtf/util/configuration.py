@@ -199,6 +199,12 @@ class ConfigValueHolderType(Protocol):
   def value(self) -> Any:
     """Returns the current set value of the config."""
     raise NotImplementedError
+  
+  @property
+  @abc.abstractmethod
+  def description(self) -> Any:
+    """Returns the current set description of the config."""
+    raise NotImplementedError
 
   @property
   @abc.abstractmethod
@@ -223,6 +229,10 @@ class _ConfigValueHolder(ConfigValueHolderType):
   @property
   def value(self) -> Any:
     return self._configuration[self.name]
+  
+  @property
+  def description(self) -> str:
+    return self._declaration.description
 
   @property
   def default(self) -> Any:

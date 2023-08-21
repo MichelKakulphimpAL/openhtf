@@ -467,6 +467,8 @@ class _Configuration(object):
   def declare(self, name, description=None, **kwargs) -> ConfigValueHolderType:
     """Declare a configuration key with the given name.
 
+    If the name was declared previously, the old declaration is simply overwritten.
+
     Args:
       name: Configuration key to declare, must not have been already declared.
       description: If provided, use this as the description for this key.
@@ -479,13 +481,10 @@ class _Configuration(object):
 
     Raises:
       InvalidKeyError: When name is not constructed correctly.
-      KeyAlreadyDeclaredError: When name has already been defined.
     """
     if not self._is_valid_key(name):
       raise InvalidKeyError(
           'Invalid key name, must begin with a lowercase letter', name)
-    if name in self._declarations:
-      raise KeyAlreadyDeclaredError('Configuration key already declared', name)
     self._declarations[name] = Declaration(
         name, description=description, **kwargs)
     return _ConfigValueHolder(self._declarations[name], self)
